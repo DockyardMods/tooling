@@ -3,14 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "generate-types": "bun run scripts/generate-types.ts",
-    "format:registry": "bun run src/cli/format-registry.ts ./registry.json",
-    "validate:registry:schema": "bun run src/cli/validate-registry-schema.ts ./registry.json https://raw.githubusercontent.com/DockyardMods/the-dockyard/main/schemas/registry.schema.json",
-    "validate:registry:content": "bun run src/cli/validate-registry-content.ts ./registry.json",
-    "validate:registry": "bun run validate:registry:schema && bun run validate:registry:content",
-    "validate:manifest:schema": "bun run src/cli/validate-manifest-schema.ts ./manifest.yml",
-    "validate:manifest:content": "bun run src/cli/validate-manifest-content.ts ./manifest.yml",
-    "validate:manifest": "bun run validate:manifest:schema && bun run validate:manifest:content"
+    "generate-types": "bun run scripts/generate-types.ts"
   },
   "devDependencies": {
     "@types/bun": "^1.3.12",
