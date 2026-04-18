@@ -1,0 +1,55 @@
+name: Validate Registry
+
+on:
+  workflow_call:
+    inputs:
+      registry_path:
+        required: false
+        type: string
+        default: ./registry.json
+      registry_schema_url:
+        required: false
+        type: string
+        default: https://raw.githubusercontent.com/DockyardMods/the-dockyard/main/schemas/registry.schema.json
+      schema_base_url:
+        required: false
+        type: string
+        default: https://raw.githubusercontent.com/DockyardMods/the-dockyard/main/schemas
+      tooling_ref:
+        required: false
+        type: string
+        default: main
+
+jobs:
+  validate-registry:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out target repo
+        uses: actions/checkout@v4
+
+      - name: Check out tooling repo
+        uses: actions/checkout@v4
+        with:
+          repository: DockyardMods/dockyard-tooling
+          ref: ${{ inputs.tooling_ref }}
+          path: tooling
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install tooling dependencies
+        working-directory: tooling
+        run: bun install --frozen-lockfile
+
+      - name: Generate types
+        working-directory: tooling
+        env:
+          DOCKYARD_SCHEMA_BASE: ${{ inputs.schema_base_url }}
+        run: bun run generate-types
+
+      - name: Validate registry schema
+        run: bun run tooling/src/cli/validate-registry-schema.ts "${{ inputs.registry_path }}" "${{ inputs.registry_schema_url }}"
+
+      - name: Validate registry content
+        run: bun run tooling/src/cli/validate-registry-content.ts "${{ inputs.registry_path }}"
